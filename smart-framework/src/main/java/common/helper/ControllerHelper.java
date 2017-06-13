@@ -12,45 +12,41 @@ import common.utils.ArrayUtil;
 import common.utils.CollectionUtil;
 
 /**
- * ·â×°ÇëÇóĞÅÏ¢
+ * æ§åˆ¶å™¨çš„åŠ©æ‰‹ç±»
  * @author cs
  *
  */
 public class ControllerHelper {
-	//»ñµÃËùÓĞController×¢½âµÄÀà£¬Í¨¹ı·´Éä»ñÈ¡¸ÃÀàÖĞËùÓĞ´øÓĞAction×¢½âµÄ·½·¨
-	//»ñÈ¡Action×¢½âÖĞµÄÇëÇó±í´ïÊ½£¬½ø¶ø»ñÈ¡ÇëÇó·½·¨ÓëÇëÇóÂ·¾¶£¬·â×°Ò»¸öÇëÇó¶ÔÏóRequestÓë´¦Àí¶ÔÏóHandler
-	//×îºó½«RequestÓëHandler½¨Á¢Ò»¸öÓ³Éä¹ØÏµ£¬·ÅÈëActionMap£¬²¢Ìá¹©Ò»¸ö¿É¸ù¾İÇëÇó·½·¨ÓëÂ·¾¶»ñÈ¡´¦Àí¶ÔÏóµÄ·½·¨
 	
 	/**
-	 * ÓÃÓÚ´æ·ÅÇëÇóÓë´¦ÀíÆ÷µÄÓ³Éä¹ØÏµ
+	 * ä¿å­˜æ‰€æœ‰çš„è¯·æ±‚å’Œå¤„ç†æ–¹æ³•ä¹‹å‰çš„æ˜ å°„å…³ç³»
 	 */
 	private static final Map<Request,Handler> ACTION_MAP = new HashMap<Request, Handler>();
 	
 	static{
-		//»ñÈ¡ËùÓĞControllerÀà
+		//è·å–æ‰€æœ‰Controllerç±»
 		Set<Class<?>> controllerClassSet = ClassHelper.getControllerClassSet();
 		if(CollectionUtil.isNotEmpty(controllerClassSet)){
-			//±éÀúÕâĞ©ControllerÀà
+			//å¾ªç¯éå†Controllerç±»
 			for(Class<?> controllerClass:controllerClassSet){
-				//»ñÈ¡ControllerÀàÖĞ¶¨ÒåµÄ·½·¨
+				//è·å–Controllerä¸­æ‰€æœ‰çš„æ–¹æ³•
 				Method[] methods = controllerClass.getDeclaredMethods();
 				if(ArrayUtil.isNotEmpty(methods)){
-					//±éÀúÕâĞ©ControllerÀàÖĞµÄ·½·¨
+					//å¾ªç¯éå†Controllerä¸­çš„æ–¹æ³•
 					for(Method method:methods){
 						if(method.isAnnotationPresent(Action.class)){
-							//´ÓAction×¢½âÖĞ»ñÈ¡URLÓ³Éä¹æÔò
+							//åˆ¤æ–­è¯¥æ–¹æ³•æ˜¯å¦ä¸ºActionçš„å¤„ç†æ–¹æ³•
 							Action action = method.getAnnotation(Action.class);
 							String mapping = action.value();
-							//ÑéÖ¤URLÓ³Éä¹æÔò
+							//ä¿å­˜URLå’Œè¯·æ±‚æ–¹æ³•ï¼ˆputã€postã€getã€deleteç­‰ï¼‰
 							if(mapping.matches("\\w+:/\\w*")){
 								String[] array = mapping.split(":");
 								if(ArrayUtil.isNotEmpty(array) && array.length == 2){
-									//»ñÈ¡ÇëÇó·½·¨ÓëÂ·¾¶
 									String requestMethod = array[0];
 									String requestPath = array[1];
 									Request request = new Request(requestMethod, requestPath);
 									Handler handler = new Handler(controllerClass, method);
-									//³õÊ¼»¯ActionMap
+									//ä¿å­˜åœ¨Mapä¸­
 									ACTION_MAP.put(request, handler);
 								}
 							}
@@ -62,7 +58,7 @@ public class ControllerHelper {
 	}
 	
 	/**
-	 * »ñÈ¡handler
+	 * è·å–handler
 	 */
 	public static Handler getHandler(String requestMethod,String requestPath){
 		Request request = new Request(requestMethod,requestPath);

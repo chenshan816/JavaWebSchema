@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * ±àÂëÓë½âÂë²Ù×÷¹¤¾ß
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
  * @author dell
  * @since 1.0.0
  */
@@ -16,7 +16,7 @@ public class CodecUtil {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CodecUtil.class);
 	
 	/**
-	 * ½«URL±àÂë
+	 * URLç¼–ç 
 	 */
 	public static String encodeURL(String source){
 		String target;
@@ -30,7 +30,7 @@ public class CodecUtil {
 	}
 	
 	/**
-	 * ½«URL½âÂë
+	 * URLè§£ç 
 	 */
 	public static String decodeURL(String source){
 		String target;
@@ -44,7 +44,7 @@ public class CodecUtil {
 	}
 	
 	/**
-	 * MD5¼ÓÃÜ
+	 * MD5åŠ å¯†
 	 */
 	public static String md5(String source){
 		return DigestUtils.md5Hex(source);

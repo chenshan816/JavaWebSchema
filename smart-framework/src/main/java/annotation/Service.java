@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * ¿ØÖÆÆ÷×¢½â
+ * æœåŠ¡å±‚æ³¨è§£
  * @author cs
  * @since 1.0.0
  */

@@ -4,20 +4,20 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
- * ·â×°ÇëÇóÐÅÏ¢
+ * ï¿½ï¿½×°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
  *
- * @author huangyong
+ * @author cs
  * @since 1.0.0
  */
 public class Request {
 
     /**
-     * ÇëÇó·½·¨
+     * ï¿½ï¿½ï¿½ó·½·ï¿½
      */
     private String requestMethod;
 
     /**
-     * ÇëÇóÂ·¾¶
+     * ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½
      */
     private String requestPath;
 

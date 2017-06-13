@@ -4,11 +4,12 @@ import org.apache.commons.lang3.StringUtils;
 
 
 /**
- * ×Ö·û´®¹¤¾ßÀà
+ * å¸®åŠ©ç±»
  */
-public class StringUtil {
+public final class StringUtil {
+	public static final String SEPARATOR = String.valueOf((char) 29);
 	/**
-	 * ÅĞ¶Ï×Ö·û´®ÊÇ·ñÎª¿Õ
+	 * æ˜¯å¦ç©º
 	 */
 	public static boolean isEmpty(String str){
 		if(str != null){
@@ -18,14 +19,14 @@ public class StringUtil {
 	}
 	
 	/**
-	 * ÅĞ¶Ï×Ö·û´®ÊÇ·ñ·Ç¿Õ
+	 * æ˜¯å¦ä¸ç©º
 	 */
 	public static boolean isNotEmpty(String str){
 		return !isEmpty(str);
 	}
 	
 	/**
-     * ·Ö¸î¹Ì¶¨¸ñÊ½µÄ×Ö·û´®
+     * åˆ†éš”
      */
     public static String[] splitString(String str, String separator) {
         return StringUtils.splitByWholeSeparator(str, separator);

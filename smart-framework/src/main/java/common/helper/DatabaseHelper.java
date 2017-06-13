@@ -6,15 +6,25 @@ import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+
+import javax.sql.DataSource;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.handlers.ArrayHandler;
+import org.apache.commons.dbutils.handlers.ArrayListHandler;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
+import org.apache.commons.dbutils.handlers.ColumnListHandler;
+import org.apache.commons.dbutils.handlers.MapHandler;
 import org.apache.commons.dbutils.handlers.MapListHandler;
+import org.apache.commons.dbutils.handlers.ScalarHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,13 +37,13 @@ import common.utils.PropsUtil;
  *
  */
 public class DatabaseHelper {
-	//��־
+	//日记
 	private static final Logger LOGGER=LoggerFactory.getLogger(DatabaseHelper.class);
-	//��ݿ��ѯ
+	//查询
 	private static final QueryRunner QUERY_RUNNER;
-	//Ϊ��ȷ��һ���߳�ֻ��һ��Connection��ʹ��ThreadLocal����ű����̱߳���
+	//使用ThreadLocal 存放连接，保证每个连接有自己独立的连接
 	private static final ThreadLocal<Connection> CONNECTION_HOLDER;
-	//������ӳ�
+	//数据源
 	private static final BasicDataSource DATA_SOURCE;
 	
 	private static final String DRIVER;
@@ -52,7 +62,6 @@ public class DatabaseHelper {
 		USERNAME = conf.getProperty("smart.framework.jdbc.username");
 		PASSWORD = conf.getProperty("smart.framework.jdbc.password");
 		
-		//��ݿ����ӳ�
 		DATA_SOURCE = new BasicDataSource();
 		DATA_SOURCE.setDriverClassName(DRIVER);
 		DATA_SOURCE.setUrl(URL);
@@ -60,8 +69,12 @@ public class DatabaseHelper {
 		DATA_SOURCE.setPassword(PASSWORD);
 	}
 	
+	public static DataSource getDataSource() {
+		return DATA_SOURCE;
+	}
+	
 	/**
-	 * ��ȡ��ݿ�����
+	 * 获取连接
 	 */
 	public static Connection getConnection(){
 		Connection conn = CONNECTION_HOLDER.get();
@@ -78,23 +91,7 @@ public class DatabaseHelper {
 		return conn;
 	}
 	/**
-	 * �ر���ݿ�����
-	 */
-	/*public static void closeConnection(){
-		Connection conn = CONNECTION_HOLDER.get();
-		if(conn != null){
-			try{
-				conn.close();
-			}catch(SQLException e){
-				LOGGER.error("close connection failure",e);
-				throw new RuntimeException(e);
-			}finally{
-				CONNECTION_HOLDER.remove();
-			}
-		}
-	}*/
-	/**
-	 * ��ѯʵ���б�
+	 * 查询所有数据
 	 */
 	public static <T> List<T> queryEntityList(Class<T> entityClass,String sql,Object... params){
 		List<T> entityList;
@@ -108,7 +105,7 @@ public class DatabaseHelper {
 		return entityList;
 	}
 	/**
-	 * ��ѯʵ��
+	 * 查询对象
 	 */
 	public static <T> T queryEntity(Class<T> entityClass,String sql,Object... params){
 		T entity;
@@ -122,8 +119,104 @@ public class DatabaseHelper {
 		return entity;
 	}
 	/**
-	 * ִ�в�ѯ���
-	 * ����Map��ʾ��������ֵ��ӳ���ϵ
+     * 查询并返回单个列值
+     */
+    public static <T> T query(String sql, Object... params) {
+        T obj;
+        try {
+            Connection conn = getConnection();
+            obj = QUERY_RUNNER.query(conn, sql, new ScalarHandler<T>(), params);
+        } catch (SQLException e) {
+            LOGGER.error("query failure", e);
+            throw new RuntimeException(e);
+        }
+        return obj;
+    }
+
+    /**
+     * 查询并返回多个列值
+     */
+    public static <T> List<T> queryList(String sql, Object... params) {
+        List<T> list;
+        try {
+            Connection conn = getConnection();
+            list = QUERY_RUNNER.query(conn, sql, new ColumnListHandler<T>(), params);
+        } catch (SQLException e) {
+            LOGGER.error("query list failure", e);
+            throw new RuntimeException(e);
+        }
+        return list;
+    }
+
+    /**
+     * 查询并返回多个列值（具有唯一性）
+     */
+    public static <T> Set<T> querySet(String sql, Object... params) {
+        Collection<T> valueList = queryList(sql, params);
+        return new LinkedHashSet<T>(valueList);
+    }
+
+    /**
+     * 查询并返回数组
+     */
+    public static Object[] queryArray(String sql, Object... params) {
+        Object[] resultArray;
+        try {
+            Connection conn = getConnection();
+            resultArray = QUERY_RUNNER.query(conn, sql, new ArrayHandler(), params);
+        } catch (SQLException e) {
+            LOGGER.error("query array failure", e);
+            throw new RuntimeException(e);
+        }
+        return resultArray;
+    }
+
+    /**
+     * 查询并返回数组列表
+     */
+    public static List<Object[]> queryArrayList(String sql, Object... params) {
+        List<Object[]> resultArrayList;
+        try {
+            Connection conn = getConnection();
+            resultArrayList = QUERY_RUNNER.query(conn, sql, new ArrayListHandler(), params);
+        } catch (SQLException e) {
+            LOGGER.error("query array list failure", e);
+            throw new RuntimeException(e);
+        }
+        return resultArrayList;
+    }
+
+    /**
+     * 查询并返回结果集映射（列名 => 列值）
+     */
+    public static Map<String, Object> queryMap(String sql, Object... params) {
+        Map<String, Object> resultMap;
+        try {
+            Connection conn = getConnection();
+            resultMap = QUERY_RUNNER.query(conn, sql, new MapHandler(), params);
+        } catch (SQLException e) {
+            LOGGER.error("query map failure", e);
+            throw new RuntimeException(e);
+        }
+        return resultMap;
+    }
+
+    /**
+     * 查询并返回结果集映射列表（列名 => 列值）
+     */
+    public static List<Map<String, Object>> queryMapList(String sql, Object... params) {
+        List<Map<String, Object>> resultMapList;
+        try {
+            Connection conn = getConnection();
+            resultMapList = QUERY_RUNNER.query(conn, sql, new MapListHandler(), params);
+        } catch (SQLException e) {
+            LOGGER.error("query map list failure", e);
+            throw new RuntimeException(e);
+        }
+        return resultMapList;
+    }
+	/**
+	 * 执行查询
 	 */
 	public static List<Map<String,Object>> executeQuery(String sql,Object ...params){
 		List<Map<String,Object>> result;
@@ -137,7 +230,7 @@ public class DatabaseHelper {
 		return result;
 	}
 	/**
-	 * ִ�и�����䣨����update��insert��delete��
+	 * 执行更新
 	 */
 	public static int executeUpdate(String sql,Object... params){
 		int rows=0;
@@ -151,22 +244,22 @@ public class DatabaseHelper {
 		return rows;
 	}
 	/**
-	 * ��ȡʵ��
-	 * ���id
+	 * 
+	 * 根据ID获取对象 
 	 */
 	public static <T> T getEntityById(Class<T> entityClass,long id){
 		String sql = "SELECT * FROM "+getTableName(entityClass)+" WHERE id = ?";
 		return queryEntity(entityClass,sql,id);
 	}
 	/**
-	 * ��ȡList
+	 * 获取List
 	 */
 	public static <T> List<T> getEntityList(Class<T> entityClass){
 		String sql = "SELECT * FROM " +getTableName(entityClass);
 		return queryEntityList(entityClass,sql);
 	}
 	/**
-	 * ����ʵ��
+	 * 插入对象
 	 */
 	public static <T> boolean insertEntity(Class<T> entityClass,Map<String,Object> fieldMap){
 		if(CollectionUtil.isEmpty(fieldMap)){
@@ -188,7 +281,7 @@ public class DatabaseHelper {
 		return executeUpdate(sql, params) == 1;
 	}
 	/**
-	 * ����ʵ��
+	 * 更新对象
 	 */
 	public static <T> boolean updateEntity(Class<T> entityClass,long id,Map<String,Object> fieldMap){
 		if(CollectionUtil.isEmpty(fieldMap)){
@@ -210,7 +303,7 @@ public class DatabaseHelper {
 		return executeUpdate(sql, params) ==1;
 	}
 	/**
-	 * ɾ��ʵ��
+	 * 删除对象
 	 */
 	public static <T> boolean deleteEntity(Class<T> entityClass,long id){
 		String sql = "DELETE FROM " + getTableName(entityClass)+" WHERE id=?";
@@ -221,7 +314,7 @@ public class DatabaseHelper {
 		return entityClass.getSimpleName();
 	}
 	/**
-	 * ִ��SQL�ļ��������ļ���ʼ��
+	 * 载入Sql文件
 	 */
 	public static void executeSqlFile(String filePath){
 		InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(filePath);
@@ -236,4 +329,58 @@ public class DatabaseHelper {
 			throw new RuntimeException(e);
 		}
 	}
+	
+	/**
+	 * 开启事务
+	 */
+	public static void beginTransaction(){
+		Connection conn = getConnection();
+		if(conn != null){
+			try {
+				conn.setAutoCommit(false);
+			} catch (SQLException e) {
+				LOGGER.error("begin transcation failure",e);
+				throw new RuntimeException();
+			}finally{
+				CONNECTION_HOLDER.set(conn);
+			}
+		}
+	}
+	
+	/**
+	 * 提交事务
+	 */
+	public static void commitTransaction(){
+		Connection conn = getConnection();
+		if(conn != null){
+			try {
+				conn.commit();
+				conn.close();
+			} catch (SQLException e) {
+				LOGGER.error("commit transcation failure",e);
+				throw new RuntimeException();
+			}finally{
+				CONNECTION_HOLDER.remove();
+			}
+		}
+	}
+	
+	/**
+	 * 回滚事务
+	 */
+	public static void rollbackTransaction(){
+		Connection conn = getConnection();
+		if(conn != null){
+			try {
+				conn.rollback();
+				conn.close();
+			} catch (SQLException e) {
+				LOGGER.error("rollback transcation failure",e);
+				throw new RuntimeException();
+			}finally{
+				CONNECTION_HOLDER.remove();
+			}
+		}
+	}
+	
 }

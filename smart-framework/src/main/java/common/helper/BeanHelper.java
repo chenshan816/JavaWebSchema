@@ -7,7 +7,7 @@ import java.util.Set;
 import common.utils.ReflectionUtil;
 
 /**
- * ��ȡ���б�Smart��ܹ����Bean��
+ * BeanHelp类获取所有的类及其实例
  * @author cs
  * @since 1.0.0
  */

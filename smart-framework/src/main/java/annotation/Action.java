@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 控制器注解
+ * Action娉ㄨВ
  * @author cs
  * @since 1.0.0
  */
@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
 public @interface Action {
 	
 	/**
-	 * 请求类型与路径
+	 * 娉ㄨВ
 	 */
 	String value();
 }

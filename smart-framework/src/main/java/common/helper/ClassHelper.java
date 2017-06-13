@@ -1,5 +1,6 @@
 package common.helper;
 
+import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -8,14 +9,13 @@ import annotation.Service;
 import common.utils.ClassUtil;
 
 /**
- * Àà²Ù×÷ÖúÊÖÀà
- * »ñÈ¡Ó¦ÓÃ°üÃûÏÂËùÓĞBeanÀàµÄ·½·¨
+ * å…³äºç±»çš„å¸®åŠ©ç±»
  * @author cs
  * @since 1.0.0
  */
 public final class ClassHelper {
 	/**
-	 * ¶¨ÒåÀà¼¯ºÏ£¨ÓÃÓÚ´æ·ÅËù¼ÓÔØµÄÀà£©
+	 * å®šä¹‰ä¸€ä¸ªç±»é›†åˆ
 	 */
 	private static final Set<Class<?>> CLASS_SET;
 	
@@ -25,14 +25,14 @@ public final class ClassHelper {
 	}
 	
 	/**
-	 * »ñÈ¡Ó¦ÓÃ°üÃûÏÂËùÓĞµÄÀà
+	 * è·å–æ‰€æœ‰çš„ç±»
 	 */
 	public static Set<Class<?>> getClassSet(){
 		return CLASS_SET;
 	}
 	
 	/**
-	 * »ñÈ¡Ó¦ÓÃ°üÃûÏÂËùÓĞServiceÀà
+	 * è·å–æ‰€æœ‰çš„Serviceç±»
 	 */
 	public static Set<Class<?>> getServiceClassSet(){
 		Set<Class<?>> classSet = new HashSet<Class<?>>();
@@ -44,7 +44,7 @@ public final class ClassHelper {
 		return classSet;
 	}
 	/**
-	 * »ñÈ¡Ó¦ÓÃ°üÃûÏÂËùÓĞControllerÀà
+	 * è·å–æ‰€æœ‰çš„Controllerç±»
 	 */
 	public static Set<Class<?>> getControllerClassSet(){
 		Set<Class<?>> classSet = new HashSet<Class<?>>();
@@ -56,12 +56,38 @@ public final class ClassHelper {
 		return classSet;
 	}
 	/**
-	 * »ñÈ¡Ó¦ÓÃ°üÃûÏÂËùÓĞBeanÀà(°üÀ¨£ºService¡¢ControllerµÈ)
+	 * è·å–æ‰€æœ‰çš„Serviceå’ŒControlleræ³¨è§£çš„ç±»ï¼Œå°†å…¶æ”¾åˆ°BeanMapä¸­
 	 */
 	public static Set<Class<?>> getBeanClassSet(){
 		Set<Class<?>> beanClassSet = new HashSet<Class<?>>();
 		beanClassSet.addAll(getServiceClassSet());
 		beanClassSet.addAll(getControllerClassSet());
 		return beanClassSet;
+	}
+	
+	/**
+	 * è·å–åº”ç”¨åŒ…åä¸‹æŸçˆ¶ç±»ï¼ˆæˆ–æ¥å£ï¼‰çš„æ‰€æœ‰å­ç±»
+	 */
+	public static Set<Class<?>> getClassSetBySuper(Class<?> superClass){
+		Set<Class<?>> classSet = new HashSet<Class<?>>();
+		for(Class<?> cls : CLASS_SET){
+			if(superClass.isAssignableFrom(cls) && !superClass.equals(cls)){
+				classSet.add(cls);
+			}
+		}
+		return classSet;
+	}
+	
+	/**
+	 * è·å–æ‰€æœ‰çš„Controllerç±»
+	 */
+	public static Set<Class<?>> getClassSetByAnnotation(Class<? extends Annotation> annotationClass){
+		Set<Class<?>> classSet = new HashSet<Class<?>>();
+		for(Class<?> cls : CLASS_SET){
+			if(cls.isAnnotationPresent(annotationClass)){
+				classSet.add(cls);
+			}
+		}
+		return classSet;
 	}
 }

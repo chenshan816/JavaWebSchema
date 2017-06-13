@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * ÎÄ¼ş²Ù×÷¹¤¾ßÀà
+ * æ–‡ä»¶åŠ©æ‰‹ç±»
  * @author cs
  * @since 1.0.0
  */
@@ -17,20 +17,20 @@ public final class FileUtil {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FileUtil.class);
 	
 	/**
-	 * »ñÈ¡ÕæÊµÎÄ¼şÃû£¨×Ô¶¯È¥µôÎÄ¼şÂ·¾¶£©
+	 * è·å¾—æ–‡ä»¶çœŸå®æ–‡ä»¶å
 	 */
 	public static String getRealFileName(String fileName) {
 		return FilenameUtils.getName(fileName);
 	}
 	
 	/**
-	 * ´´½¨ÎÄ¼ş
+	 * åˆ›å»ºæ–‡ä»¶
 	 */
 	public static File creatFile(String filePath) {
 		File file;
 		file = new File(filePath);
 		File parentDir = file.getParentFile();
-		//µİ¹é´´½¨Ä¿Â¼
+		//å¾ªç¯åˆ›å»ºæ‰€æœ‰çš„æ–‡ä»¶å¤¹
 		try {
 			if(!parentDir.exists()){
 			FileUtils.forceMkdir(parentDir);

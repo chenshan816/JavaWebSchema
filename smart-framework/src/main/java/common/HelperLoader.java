@@ -1,18 +1,25 @@
-package common.helper;
+package common;
 
+import common.helper.AOPHelper;
+import common.helper.BeanHelper;
+import common.helper.ClassHelper;
+import common.helper.ControllerHelper;
+import common.helper.IOCHelper;
 import common.utils.ClassUtil;
 
 /**
- * Í¨¹ıÒ»¸öÈë¿Ú³ÌĞò¼ÓÔØËÄ¸öHelperÀàµÄ¾²Ì¬¿é
+ * Í¨ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ú³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¸ï¿½Helperï¿½ï¿½Ä¾ï¿½Ì¬ï¿½ï¿½
  * @author cs
  * @since
  */
 public final class HelperLoader {
 	
 	public static void init(){
+		//æœ‰é¡ºåºä¹‹åˆ†
 		Class<?>[] classList={
 				ClassHelper.class,
 	            BeanHelper.class,
+	            AOPHelper.class,
 	            IOCHelper.class,
 	            ControllerHelper.class
 				};

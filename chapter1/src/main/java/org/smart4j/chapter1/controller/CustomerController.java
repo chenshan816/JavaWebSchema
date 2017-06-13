@@ -1,6 +1,7 @@
 package org.smart4j.chapter1.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.smart4j.chapter1.model.Customer;
 import org.smart4j.chapter1.service.CustomerService;
@@ -8,30 +9,31 @@ import org.smart4j.chapter1.service.CustomerService;
 import annotation.Action;
 import annotation.Controller;
 import annotation.Inject;
-
 import common.bean.Data;
 import common.bean.Param;
 import common.bean.View;
 
 
 /**
- * ����ͻ������������
+ * 处理客户管理相关请求
  */
 @Controller
 public class CustomerController {
-	@Inject
+
+    @Inject
     private CustomerService customerService;
-	/**
-     * ���� �ͻ��б� ����
+
+    /**
+     * 进入 客户列表 界面
      */
     @Action("get:/customer")
-    public View index(Param param) {
+    public View index() {
         List<Customer> customerList = customerService.getCustomerList();
-        return new View("hello.jsp").addModel("customerList", customerList);
+        return new View("customer.jsp").addModel("customerList", customerList);
     }
 
     /**
-     * ��ʾ�ͻ�����Ϣ
+     * 显示客户基本信息
      */
     @Action("get:/customer_show")
     public View show(Param param) {
@@ -41,25 +43,25 @@ public class CustomerController {
     }
 
     /**
-     * ���� �����ͻ� ����
+     * 进入 创建客户 界面
      */
     @Action("get:/customer_create")
-    public View create(Param param) {
+    public View create() {
         return new View("customer_create.jsp");
     }
 
     /**
-     * ���� �����ͻ� ����
+     * 处理 创建客户 请求
      */
-//    @Action("post:/customer_create")
-//    public Data createSubmit(Param param) {
-//        Map<String, Object> fieldMap = param.getFieldMap();
-//        boolean result = customerService.createCustomer(fieldMap);
-//        return new Data(result);
-//    }
+    @Action("post:/customer_create")
+    public Data createSubmit(Param param) {
+        Map<String, Object> fieldMap = param.getFieldMap();
+        boolean result = customerService.createCustomer(fieldMap);
+        return new Data(result);
+    }
 
     /**
-     * ���� �༭�ͻ� ����
+     * 进入 编辑客户 界面
      */
     @Action("get:/customer_edit")
     public View edit(Param param) {
@@ -69,18 +71,18 @@ public class CustomerController {
     }
 
     /**
-     * ���� �༭�ͻ� ����
+     * 处理 编辑客户 请求
      */
-//    @Action("put:/customer_edit")
-//    public Data editSubmit(Param param) {
-//        long id = param.getLong("id");
-//        Map<String, Object> fieldMap = param.getFieldMap();
-//        boolean result = customerService.updateCustomer(id, fieldMap);
-//        return new Data(result);
-//    }
+    @Action("put:/customer_edit")
+    public Data editSubmit(Param param) {
+        long id = param.getLong("id");
+        Map<String, Object> fieldMap = param.getFieldMap();
+        boolean result = customerService.updateCustomer(id, fieldMap);
+        return new Data(result);
+    }
 
     /**
-     * ���� ɾ��ͻ� ����
+     * 处理 删除客户 请求
      */
     @Action("delete:/customer_edit")
     public Data delete(Param param) {
@@ -88,5 +90,5 @@ public class CustomerController {
         boolean result = customerService.deleteCustomer(id);
         return new Data(result);
     }
-
 }
+    
